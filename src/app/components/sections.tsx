@@ -1,5 +1,10 @@
 import React from "react";
+
+// ── LOGO ─────────────────────────────────────────────────────────────────
+// Swap this for your real 50th-anniversary logo file — nothing else in this
+// component needs to change once you do.
 import logoImg from "../../imports/image.png";
+import logoImg1 from "../../imports/Homepage/5a015c837cc63a1e3afec59a04ef46d449dad5cf.png";
 import logoSvg from "../../imports/5.svg";
 import { Fireworks } from "./fireworks";
 import svgPaths from "../../imports/Homepage/svg-ryk8ue9wk8";
@@ -23,6 +28,24 @@ import img51 from "../../imports/Homepage/8873fd3b316d2dfee9ed04e7d8029959426469
 import img91 from "../../imports/Homepage/968c2920f880959ab3393716584f0e350964c423.png";
 import imgImage from "../../imports/Homepage/9ec56a815db13e6f5f4c4f51dc8c89bded734cf2.png";
 import imgDreamyColorfulSmokeClouds2 from "../../imports/Frame19/9f5fd2117b550f89743011446393e79f9a3e46dc.png";
+
+// ── NEW ASSETS ──────────────────────────────────────────────────────────────
+// Placeholder references only — replace these three imports with your real
+// files. Nothing else in the file needs to change once you do.
+import imgStartedPhoto from "../../imports/Homepage/ukpic.png"; // ukhome2 left photo
+import imgVideoPoster from "../../imports/Homepage/ukpic.png";       // ukhome3 video thumbnail
+// import mp4 may lack type declarations in this TSX context; use require with ts-ignore
+// @ts-ignore
+import videoSrcPlaceholder from "../../imports/Homepage/aboutvideo.mp4";          // ukhome3 actual video file
+
+// ─── Site-wide typography tokens ───────────────────────────────────────────
+// Header font (site-wide): CRONDE
+// Sub-heading / body copy (site-wide): Futura PT, Regular, 18px / 32px line-height
+// Applied consistently across all sections below — this is the single source
+// of truth for body-copy classes so every section stays in sync.
+export const HEADER_FONT = "font-['CRONDE:Regular',sans-serif]";
+export const BODY_COPY =
+  "font-['Futura_PT:Book',sans-serif] text-[18px] leading-[32px]";
 
 // ─── Timeline data ────────────────────────────────────────────────────────────
 
@@ -68,7 +91,7 @@ export const TIMELINE_DATA = [
   { year: 2026, title: "Golden Jubilee",               text: "The David Academy launches in Birmingham (April); the Italy church relaunches after eight years' dormancy; the first Mainland Europe Grand Maiden Mini-Camp Meeting is held in Lucca; the church marks its Golden Jubilee." },
 ].map((entry, i) => ({ ...entry, bgImage: TL_IMAGES[i % TL_IMAGES.length] }));
 
-// ─── Section 1: Opening hero ──────────────────────────────────────────────────
+// ─── Section 1: Opening hero (splash — uksplash1 / uksplash2) ────────────────
 
 function PhotoFrame() {
   return (
@@ -125,7 +148,7 @@ function PictureFrame() {
 }
 
 /**
- * Section 1 canvas (1440 × 977 design px).
+ * Section 1 canvas (1440 × 977 design px on desktop, fully fluid below md).
  *
  * scrollProgress 0 → 1 covers only Phase 1:
  *   0 → 0.6  text + frames drift up and fade out
@@ -133,6 +156,11 @@ function PictureFrame() {
  *
  * Phase 2 (whole-section dissolve) is applied by the fixed container in App,
  * so this component never touches overall opacity.
+ *
+ * MOBILE FIX: this component must be rendered at its NATIVE size (not inside
+ * a `transform: scale(vw/1440)` wrapper) for its responsive classes and the
+ * clamp()-based fluid type below to work. See App.tsx — on mobile/tablet the
+ * hero renders directly, with no design-canvas scale wrapper around it.
  */
 export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
   const clamp = (v: number, lo: number, hi: number) =>
@@ -153,7 +181,7 @@ export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
 
   return (
     <div
-      className="min-h-[600px] md:h-[977px] left-0 overflow-clip relative w-full md:w-[1440px]"
+      className="min-h-[100svh] md:h-[977px] left-0 overflow-clip relative w-full"
       style={{ backgroundImage: "linear-gradient(0.480792deg, rgb(25, 36, 65) 38.09%, rgb(1, 9, 25) 110.38%)" }}
     >
       {/* Smoke — fades with the hero text */}
@@ -168,10 +196,18 @@ export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
         </div>
       </div>
 
-      {/* Fireworks — behind the logo, in front of the smoke */}
-      <Fireworks active={fireworksActive} width={1440} height={977} />
+      {/* Fireworks — behind the logo, in front of the smoke.
+          Forced to fill its container responsively: if fireworks.tsx renders
+          an <svg viewBox="0 0 {width} {height}"> internally (typical), this
+          override makes it scale to fit any screen instead of staying pinned
+          to a fixed 1440×977 box. If fireworks.tsx uses a <canvas> with hard
+          pixel dimensions instead of an SVG viewBox, that file needs its own
+          resize-aware fix — share it and this can be tightened further. */}
+      <div className="absolute inset-0 w-full h-full [&>svg]:w-full [&>svg]:h-full pointer-events-none">
+        <Fireworks active={fireworksActive} width={1440} height={977} />
+      </div>
 
-      {/* 50th Anniversary logo — revealed beneath the hero content */}
+      {/* 50th Anniversary logo — revealed beneath the hero content (uksplash2) */}
       <div
         className="absolute inset-0 flex items-center justify-center px-4"
         style={{ opacity: logoOpacity }}
@@ -179,11 +215,11 @@ export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
         <img
           src={logoImg}
           alt="50th Anniversary — AFC UK & Western Europe"
-          className="w-[90%] max-w-[620px] h-auto"
+          className="w-[85%] sm:w-[75%] md:w-[90%] max-w-[620px] h-auto"
         />
       </div>
 
-      {/* Hero text + picture frames — drift up and fade out (frontmost layer) */}
+      {/* Hero text + picture frames — drift up and fade out (frontmost layer, uksplash1) */}
       <div
         style={{
           position: "absolute",
@@ -192,15 +228,27 @@ export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
           transform: `translateY(${textDriftY}px)`,
         }}
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[596px] px-4 md:px-0 text-center">
-          <p className="font-['Futura_PT:Book',sans-serif] text-[24px] md:text-[48px] text-white leading-normal mb-4">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[88%] sm:w-[85%] max-w-[596px] px-2 sm:px-4 md:px-0 text-center">
+          <p
+            className="font-['Futura_PT:Book',sans-serif] text-white mb-3 md:mb-4"
+            style={{
+              fontSize: "clamp(18px, 5vw, 48px)",
+              lineHeight: "clamp(28px, 7vw, 60px)",
+            }}
+          >
             {`"One generation shall praise thy works to another, and shall declare thy mighty acts."`}
           </p>
-          <p className="font-['Futura_PT:Book',sans-serif] text-[20px] md:text-[48px] text-white leading-normal">
+          <p
+            className="font-['Futura_PT:Book',sans-serif] text-white"
+            style={{
+              fontSize: "clamp(14px, 3.5vw, 48px)",
+              lineHeight: "clamp(22px, 5vw, 60px)",
+            }}
+          >
             — Psalm 145:4
           </p>
         </div>
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <PictureFrame />
         </div>
       </div>
@@ -212,8 +260,8 @@ export function Section1({ scrollProgress = 0 }: { scrollProgress?: number }) {
 
 function ImgBg() {
   return (
-    <div className="absolute h-[1017px] left-0 opacity-10 top-[-21px] w-[1442px]">
-      <div className="absolute h-[1017px] left-[-83px] top-0 w-[1525.873px]">
+    <div className="absolute h-full left-0 opacity-10 top-0 w-full pb-[10px] hidden md:block">
+      <div className="absolute h-[1017px] left-[-83px] top-[-21px] w-[1525.873px]">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage3} />
       </div>
     </div>
@@ -226,7 +274,62 @@ function SmallFrame({ img }: { img: string }) {
   );
 }
 
-// Rotating dial ring + surrounding year labels
+// Diagonal grid pattern used behind the "Praise God With US!" hero (ukhome1)
+function DiagonalGrid() {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        opacity: 0.55,
+        backgroundImage:
+          "repeating-linear-gradient(35deg, transparent, transparent 77px, rgba(25,36,65,0.09) 77px, rgba(25,36,65,0.09) 78px)," +
+          "repeating-linear-gradient(-35deg, transparent, transparent 77px, rgba(25,36,65,0.09) 77px, rgba(25,36,65,0.09) 78px)",
+        maskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 85%)",
+        WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 85%)",
+      }}
+    />
+  );
+}
+
+// Simple play-button video card used in the video section (ukhome3video)
+function VideoPlayer() {
+  const [playing, setPlaying] = React.useState(false);
+
+  if (playing) {
+    return (
+      <div className="relative w-full max-w-[1096px] aspect-video rounded-[4px] overflow-hidden bg-black">
+        <video
+          src={videoSrcPlaceholder}
+          controls
+          autoPlay
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPlaying(true)}
+      aria-label="Play video"
+      className="relative w-full max-w-[1096px] aspect-video rounded-[4px] overflow-hidden cursor-pointer border-0 p-0 block"
+    >
+      <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgVideoPoster} />
+      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="size-[56px] md:size-[84px] rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center border border-white/70">
+          <svg width="20" height="23" viewBox="0 0 26 30" fill="none" className="md:w-[26px] md:h-[30px]">
+            <path d="M0 0 L26 15 L0 30 Z" fill="white" />
+          </svg>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// Rotating dial ring + surrounding year labels (desktop / tablet only — see
+// mobile TimelineMobile component below for small screens).
 // svgRotation: brings activeYearIndex tick to the visual 12-o'clock position
 function TimelineRing({
   activeYearIndex,
@@ -379,24 +482,24 @@ function TimelineRing({
 
 function SVGGroups() {
   return (
-    <div className="absolute contents inset-[-12.5%_14.58%]">
+    <div className="absolute contents inset-[-12.5%_14.58%] hidden md:block">
       <div className="absolute inset-[-12.5%_14.58%] opacity-10">
         <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1020 1020">
-          <g><path d={svgPaths.p32d5c00} fill="var(--fill-0, #949494)" /></g>
+          <g><path d={(svgPaths as any).p32d5c00} fill="var(--fill-0, #949494)" /></g>
         </svg>
       </div>
       {[
-        { inset: "76.13%_16.36%_2.24%_25.01%", vb: "0 0 844.231 176.516", d: svgPaths.p56d4880 },
-        { inset: "61.41%_18.08%_17.07%_23.28%", vb: "0 0 844.421 175.579", d: svgPaths.p77edd00 },
-        { inset: "46.59%_19.82%_31.81%_21.55%", vb: "0 0 844.317 176.257", d: svgPaths.pcc0b00 },
-        { inset: "31.85%_21.54%_46.63%_19.81%", vb: "0 0 844.421 175.578", d: svgPaths.p1387e580 },
-        { inset: "17.07%_23.28%_61.41%_18.08%", vb: "0 0 844.421 175.58",  d: svgPaths.p2637c180 },
-        { inset: "2.25%_25.01%_76.15%_16.36%",  vb: "0 0 844.316 176.257", d: svgPaths.p2defe450 },
-        { inset: "-8.86%_24.36%_5.38%_63.44%",  vb: "0 0 175.568 844.402", d: svgPaths.p1ab1b700 },
-        { inset: "-5.3%_34.13%_1.82%_53.67%",   vb: "0 0 175.567 844.402", d: svgPaths.p3607bf00 },
-        { inset: "-1.74%_43.9%",                  vb: "0 0 175.568 844.402", d: svgPaths.p9d11600  },
-        { inset: "1.82%_53.68%_-5.3%_34.13%",   vb: "0 0 175.568 844.402", d: svgPaths.p2faa4831 },
-        { inset: "5.38%_63.45%_-8.86%_24.36%",  vb: "0 0 175.568 844.402", d: svgPaths.p9deab80  },
+        { inset: "76.13%_16.36%_2.24%_25.01%", vb: "0 0 844.231 176.516", d: (svgPaths as any).p56d4880 },
+        { inset: "61.41%_18.08%_17.07%_23.28%", vb: "0 0 844.421 175.579", d: (svgPaths as any).p77edd00 },
+        { inset: "46.59%_19.82%_31.81%_21.55%", vb: "0 0 844.317 176.257", d: (svgPaths as any).pcc0b00 },
+        { inset: "31.85%_21.54%_46.63%_19.81%", vb: "0 0 844.421 175.578", d: (svgPaths as any).p1387e580 },
+        { inset: "17.07%_23.28%_61.41%_18.08%", vb: "0 0 844.421 175.58",  d: (svgPaths as any).p2637c180 },
+        { inset: "2.25%_25.01%_76.15%_16.36%",  vb: "0 0 844.316 176.257", d: (svgPaths as any).p2defe450 },
+        { inset: "-8.86%_24.36%_5.38%_63.44%",  vb: "0 0 175.568 844.402", d: (svgPaths as any).p1ab1b700 },
+        { inset: "-5.3%_34.13%_1.82%_53.67%",   vb: "0 0 175.567 844.402", d: (svgPaths as any).p3607bf00 },
+        { inset: "-1.74%_43.9%",                  vb: "0 0 175.568 844.402", d: (svgPaths as any).p9d11600  },
+        { inset: "1.82%_53.68%_-5.3%_34.13%",   vb: "0 0 175.568 844.402", d: (svgPaths as any).p2faa4831 },
+        { inset: "5.38%_63.45%_-8.86%_24.36%",  vb: "0 0 175.568 844.402", d: (svgPaths as any).p9deab80  },
       ].map((g, i) => (
         <div key={i} className="absolute opacity-10" style={{ inset: g.inset }}>
           <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox={g.vb}>
@@ -420,59 +523,151 @@ function PhotoCard() {
   );
 }
 
-// ─── Exported Section 3 parts ─────────────────────────────────────────────────
+
+// WELCOME_H was 900 — much taller than the actual logo+heading+subtext
+// content needs, which is what created the large empty margins above and
+// below that content when it was vertically centered inside the box.
+// Trimmed to 640 so the hero reads as intentionally-sized rather than
+// mostly empty. If you want it taller again, bump this back up.
+const WELCOME_H = 400;
+const STARTED_H = 860;
+const VIDEO_H   = 860;
+export const PRE_H_TOTAL = WELCOME_H + STARTED_H + VIDEO_H; // 2222 — mirror in App.tsx's PRE_H (desktop / md+ only)
 
 export function PreTimelineSection() {
   return (
-    <div className="bg-white h-[1359px] left-0 overflow-clip relative w-[1440px]">
-      <div className="absolute flex h-[3054px] items-center justify-center left-[-162px] top-[-430px] w-[1742px]">
-        <div className="flex-none rotate-180">
-          <div className="h-[3054px] opacity-12 relative w-[1742px]">
-            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgDreamyColorfulSmokeClouds2} />
+    <div className="bg-[#fcf9f2] relative w-full overflow-clip">
+
+      {/* ══════════════════ MOBILE / TABLET (stacked, natural flow) ══════════════════ */}
+      <div className="flex flex-col md:hidden">
+        {/* 1. Hero */}
+        <div className="relative w-full min-h-[100svh] overflow-hidden bg-[#fcf9f2] flex items-center justify-center px-6 py-16">
+          <DiagonalGrid />
+          <div className="relative flex flex-col items-center text-center max-w-[420px] z-10">
+            {/* Logo — sized by width only (h-auto), same approach as the
+                Section1 splash logo above it. A fixed-height box with
+                object-contain (the previous attempt) shrinks the visible
+                mark whenever the source PNG has its own transparent
+                padding — that's what made it look too small. Adjust
+                max-w-[240px] to taste. */}
+            <img
+              src={logoImg1}
+              alt="AFM 50th Anniversary"
+              className="w-full max-w-[240px] h-auto"
+            />
+            <div className="mt-3">
+              <p className="text-[#192441] text-[38px] leading-[1.05]" style={{ fontFamily: "'CRONDE:Regular'" }}>
+                Praise God
+              </p>
+              <p className="text-[#192441] text-[38px] leading-[1.05]" style={{ fontFamily: "'CRONDE:Regular'" }}>
+                With US!
+              </p>
+            </div>
+            <p className={`${BODY_COPY} text-[#192441] mt-4`} style={{ opacity: 0.8 }}>
+              I know not what God will accomplish in and through me, but I will do my best to be faithful.
+            </p>
           </div>
+        </div>
+
+        {/* 2. Where it all started */}
+        <div className="relative w-full bg-[#0f1421] px-6 py-16">
+          <div className="flex flex-col items-center gap-8 max-w-[500px] mx-auto">
+            <div className="w-full aspect-[4/3] relative overflow-hidden">
+              <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgStartedPhoto} />
+              <div aria-hidden className="absolute border-[4px] border-solid border-white inset-0 pointer-events-none" />
+            </div>
+            <div className="flex flex-col gap-4 items-start text-white text-left">
+              <p className="font-['CRONDE:Regular',sans-serif] text-[32px] leading-tight">Where it all started</p>
+              <p className={`${BODY_COPY} opacity-90`}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut.
+              </p>
+              <a
+                href="#timeline"
+                onClick={(e) => { e.preventDefault(); window.location.hash = "#timeline"; }}
+                className="font-['Futura_PT:Book',sans-serif] text-[15px] text-white underline underline-offset-4 decoration-1 cursor-pointer"
+              >
+                Read Full Timeline
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Video section */}
+        <div className="relative w-full bg-[#0f1421] px-6 py-14 flex items-center justify-center">
+          <VideoPlayer />
         </div>
       </div>
-      {/* Org logo / hero image */}
-      <div className="absolute h-[977px] left-0 top-0 w-[1440px]">
-        <div className="absolute h-[294px] left-[266px] top-[128px] w-[853px]">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <img alt="" className="absolute h-[443.28%] left-[-22.15%] max-w-none top-[-172.98%] w-[143.62%]" src={img1998} />
+
+      {/* ══════════════════ DESKTOP (pixel-perfect canvas, unchanged) ══════════════════ */}
+      <div className="hidden md:block relative w-[1440px] max-w-full mx-auto h-[2222px]">
+
+        {/* ============ 1. "PRAISE GOD WITH US!" hero (ukhome1) ============ */}
+        <div className="absolute left-0 top-0 w-[1440px] h-[640px] overflow-hidden bg-[#fcf9f2]">
+          <DiagonalGrid />
+
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-center w-full max-w-[900px] px-8 z-10">
+            {/* Logo — sized by width only (h-auto), matching how the
+                Section1 splash logo renders. A fixed-height box with
+                object-contain (a previous attempt) shrinks the visible
+                mark whenever the source PNG carries its own transparent
+                padding — that's what made it read as "too small". Adjust
+                max-w-[420px] to taste; the flex layout below adapts to
+                whatever height the image ends up rendering at, so nothing
+                else needs to change. */}
+            <img
+              src={logoImg1}
+              alt="AFM 50th Anniversary"
+              className="w-full max-w-[420px] h-auto"
+            />
+
+            <div className="mt-[-150px]">
+              <p className="text-[#192441] text-[64px] leading-[1]"
+                 style={{ fontFamily: "'CRONDE:Regular'" }}>
+                Praise God
+              </p>
+              <p className="text-[#192441] text-[64px] leading-[1]"
+                 style={{ fontFamily: "'CRONDE:Regular'" }}>
+                With US!
+              </p>
+            </div>
+
+            <p className={`${BODY_COPY} text-[#192441] max-w-[520px] mt-3`} style={{ opacity: 0.8 }}>
+              I know not what God will accomplish in and through me, but I will do my best to be faithful.
+            </p>
           </div>
         </div>
-        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Futura_PT:Book',sans-serif] justify-center leading-[0] left-[353px] not-italic text-[#080d1a] text-[24px] top-[526.5px] w-[734px]">
-          <p className="leading-[normal]">
-            Welcome to the story of the Apostolic Faith Church in the United Kingdom and Western Europe — fifty years of prayer, preaching, and publishing the Gospel, from a lounge in Brixton in 1976 to more than thirty churches and groups across Britain and mainland Europe today.
-          </p>
-        </div>
-      </div>
-      {/* Dark image + text overlay */}
-      <div className="-translate-x-1/2 absolute bg-[#0f1421] h-[722px] left-1/2 overflow-clip top-[637px] w-[1440px]">
-        <div className="absolute h-[1017px] left-0 opacity-10 top-[-14px] w-[1442px]">
-          <div className="absolute h-[1017px] left-[-83px] top-0 w-[1525.873px]">
-            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage3} />
-          </div>
-        </div>
-        <div className="-translate-x-1/2 absolute content-stretch flex gap-[62px] items-center left-1/2 top-[217px] w-[1096px]">
-          <div className="h-[280.784px] relative shrink-0 w-[399.84px]">
-            <div className="overflow-clip relative rounded-[inherit] size-full">
-              <div className="absolute flex h-[501.563px] items-center justify-center left-[-155.94px] top-[-123.6px] w-[655.889px]">
-                <div className="flex-none rotate-[11.33deg]">
-                  <div className="h-[393.329px] relative w-[590.137px]">
-                    <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage3} />
-                  </div>
-                </div>
+
+        {/* ============ 2. "WHERE IT ALL STARTED" dark two-column (ukhome2) ============ */}
+        <div className="absolute left-0 top-[640px] w-[1440px] h-[722px] bg-[#0f1421] overflow-clip">
+          <ImgBg />
+          <div className="-translate-x-1/2 -translate-y-1/2 absolute content-stretch flex gap-[62px] items-center left-1/2 top-[361px] w-[1000px]">
+            <div className="h-[280px] relative shrink-0 w-[400px] overflow-clip">
+              <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgStartedPhoto} />
+              <div aria-hidden className="absolute border-[5px] border-solid border-white inset-0 pointer-events-none" />
+            </div>
+            <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start leading-[0] not-italic relative shrink-0 text-white w-[538px]">
+              <div className="flex flex-col font-['CRONDE:Regular',sans-serif] justify-center min-w-full relative shrink-0 text-[48px] w-[min-content]">
+                <p className="leading-[normal]">Where it all started</p>
               </div>
+              <div className={`flex flex-col ${BODY_COPY} justify-center relative shrink-0 w-full opacity-90`}>
+                <p className="leading-[32px]">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut.
+                </p>
+              </div>
+              <a
+                href="#timeline"
+                onClick={(e) => { e.preventDefault(); window.location.hash = "#timeline"; }}
+                className="font-['Futura_PT:Book',sans-serif] text-[16px] text-white underline underline-offset-4 decoration-1 cursor-pointer"
+              >
+                Read Full Timeline
+              </a>
             </div>
-            <div aria-hidden className="absolute border-[4.948px] border-solid border-white inset-0 pointer-events-none" />
           </div>
-          <div className="[word-break:break-word] content-stretch flex flex-col gap-[34px] items-start leading-[0] not-italic relative shrink-0 text-white w-[734px]">
-            <div className="flex flex-col font-['CRONDE:Regular',sans-serif] justify-center min-w-full relative shrink-0 text-[48px] w-[min-content]">
-              <p className="leading-[normal]">Fifty Years of God's Faithfulness</p>
-            </div>
-            <div className="flex flex-col font-['Futura_PT:Book',sans-serif] justify-center relative shrink-0 text-[24px] w-[601px]">
-              <p className="leading-[normal]">On 11 April 1976, Brother Victor Okusanya gathered three believers for the first Sunday school lesson in a Brixton lounge. Fifty years on, from Scotland to seven countries across mainland Europe: Pray, Preach, Publish.</p>
-            </div>
-          </div>
+        </div>
+
+        {/* ============ 3. VIDEO SECTION (ukhome3video) ============ */}
+        <div className="absolute left-0 top-[1322px] w-[1440px] h-[860px] bg-[#0f1421] flex items-center justify-center px-6">
+          <VideoPlayer />
         </div>
       </div>
     </div>
@@ -480,8 +675,12 @@ export function PreTimelineSection() {
 }
 
 /**
- * TimelineSection — rendered inside a fixed fullscreen overlay managed by App.
- * The design canvas is 1440 × 782 px; App scales + centers it within 100vh.
+ * TimelineSection — rendered inside a fixed fullscreen overlay managed by App
+ * on desktop, and reused directly (with its own mobile branch below) inside
+ * a swipeable viewer on mobile/tablet — see MobileTimelineViewer in App.tsx.
+ * The design canvas is 1440 × 782 px on desktop; on small screens the
+ * pixel-positioned dial ring and year labels don't fit, so a simplified
+ * stacked card layout is shown instead below `md`.
  */
 export function TimelineSection({
   activeYearIndex,
@@ -535,101 +734,148 @@ export function TimelineSection({
   const bgB = Math.round(33  + (242 - 33)  * bgT);
 
   const imgBgOpacity = 1 - norm(0.70, 1.00);
+  const bg = `rgb(${bgR},${bgG},${bgB})`;
 
   return (
-    <div
-      className="h-[782px] left-0 overflow-clip relative w-[1440px]"
-      style={{ background: `rgb(${bgR},${bgG},${bgB})` }}
-    >
-      {/* Background image layer that changes with active year */}
-      <div style={{ 
-        position: "absolute", 
-        inset: 0, 
-        opacity: Math.max(0.25, imgBgOpacity * 0.35),
-        transition: "opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
-      }}>
-        <img 
-          key={safeIndex}
-          src={entry.bgImage} 
-          alt="" 
-          style={{ 
-            position: "absolute", 
-            inset: 0, 
-            width: "100%", 
-            height: "100%", 
-            objectFit: "cover",
-            objectPosition: "center",
-          }} 
-        />
-        {/* Dark overlay for text legibility */}
+    <div className="relative w-full h-full md:h-[782px] overflow-clip" style={{ background: bg }}>
+
+      {/* ══════════════════ MOBILE / TABLET simplified card ══════════════════ */}
+      <div className="flex md:hidden relative w-full h-full min-h-[100svh] flex-col items-center justify-center px-6 py-16">
+        {/* background image tied to the active year */}
+        <div className="absolute inset-0" style={{ opacity: Math.max(0.25, imgBgOpacity * 0.4) }}>
+          <img
+            key={safeIndex}
+            src={entry.bgImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(180deg, rgba(15,20,33,0.8) 0%, rgba(15,20,33,0.9) 100%)" }}
+          />
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center text-center max-w-[420px]" style={{ opacity: contentOpacity, transition: "opacity 0.25s ease" }}>
+          <p
+            className="text-white mb-3"
+            style={{ fontFamily: "'CRONDE'", fontSize: 44, opacity: labelsOpacity, transition: "opacity 0.35s ease" }}
+          >
+            {entry.year}
+          </p>
+          <h3 className="font-['CRONDE'] text-[24px] text-white mb-3 leading-tight">
+            {entry.title}
+          </h3>
+          <p className={`${BODY_COPY} text-white opacity-90`}>
+            {entry.text}
+          </p>
+        </div>
+
+        <div className="relative z-10 mt-8" style={{ opacity: dotsOpacity }}>
+          <p style={{
+            fontFamily: "'Futura PT', sans-serif",
+            fontSize: 12,
+            color: "#D9C7A8",
+            opacity: 0.7,
+            letterSpacing: "0.14em",
+            margin: 0,
+          }}>
+            {String(activeYearIndex + 1).padStart(2, "0")} / {String(TIMELINE_DATA.length).padStart(2, "0")}
+          </p>
+        </div>
+      </div>
+
+      {/* ══════════════════ DESKTOP (pixel-perfect rotating dial) ══════════════════ */}
+      <div className="hidden md:block relative w-[1440px] max-w-full mx-auto h-[782px]">
+        {/* Background image layer that changes with active year */}
         <div style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(180deg, rgba(15,20,33,0.75) 0%, rgba(15,20,33,0.85) 100%)",
-        }} />
-      </div>
-
-      {/* Texture background fades as colour transitions */}
-      <div style={{ opacity: imgBgOpacity * 0.05 }}>
-        <ImgBg />
-      </div>
-
-      {/* ── Ring layer ──────────────────────────────────────────────────── */}
-      {/* Contracts toward canvas centre (50% 50%) and drifts upward.      */}
-      {/* Because the ring arc is near the canvas bottom, scaling from      */}
-      {/* canvas centre causes the visible arc to rise while shrinking.     */}
-      <div style={{
-        position: "absolute", inset: 0,
-        transform: `translateY(${ringDriftY}px) scale(${ringScale})`,
-        transformOrigin: "50% 50%",
-        opacity: Math.max(0, ringOpacity),
-        pointerEvents: "none",
-      }}>
-        <TimelineRing activeYearIndex={safeIndex} labelsOpacity={labelsOpacity} />
-      </div>
-
-      {/* Decorative frames — fade out with content */}
-      <div style={{ position: "absolute", inset: 0, opacity: framesOpacity, pointerEvents: "none" }}>
-        <div className="absolute flex h-[153.332px] items-center justify-center left-[37px] top-[293px] w-[187.781px]">
-          <div className="flex-none rotate-15"><SmallFrame img={imgImage3} /></div>
-        </div>
-        <div className="absolute flex h-[153.332px] items-center justify-center left-[1210px] top-[362px] w-[187.781px]">
-          <div className="-rotate-15 flex-none"><SmallFrame img={imgImage3} /></div>
-        </div>
-      </div>
-
-      {/* Title */}
-      <div
-        className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col justify-center leading-[0] left-[calc(50%+7.5px)] not-italic text-center text-white top-[202px] whitespace-nowrap"
-        style={{ fontFamily: "'CRONDE', sans-serif", fontSize: 48, opacity: contentOpacity, transition: "opacity 0.25s ease" }}
-      >
-        <p className="leading-[normal]">{entry.title}</p>
-      </div>
-
-      {/* Body text */}
-      <div
-        className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Futura_PT:Book',sans-serif] justify-center leading-[0] left-[calc(50%+14px)] not-italic text-[20px] text-center text-white top-[337px] w-[770px]"
-        style={{ opacity: contentOpacity, transition: "opacity 0.16s ease" }}
-      >
-        <p className="leading-[normal]">{entry.text}</p>
-      </div>
-
-      {/* Year counter — e.g. "08 / 14" — replaces the dots */}
-      <div
-        className="absolute bottom-[32px] left-1/2 -translate-x-1/2"
-        style={{ opacity: dotsOpacity }}
-      >
-        <p style={{
-          fontFamily: "'Futura PT', sans-serif",
-          fontSize: 13,
-          color: "#D9C7A8",
-          opacity: 0.55,
-          letterSpacing: "0.14em",
-          margin: 0,
-          whiteSpace: "nowrap",
+          opacity: Math.max(0.25, imgBgOpacity * 0.35),
+          transition: "opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
         }}>
-          {String(activeYearIndex + 1).padStart(2, "0")} / {String(TIMELINE_DATA.length).padStart(2, "0")}
-        </p>
+          <img
+            key={safeIndex}
+            src={entry.bgImage}
+            alt=""
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+          {/* Dark overlay for text legibility */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(180deg, rgba(15,20,33,0.75) 0%, rgba(15,20,33,0.85) 100%)",
+          }} />
+        </div>
+
+        {/* Texture background fades as colour transitions */}
+        <div style={{ opacity: imgBgOpacity * 0.05 }}>
+          <ImgBg />
+        </div>
+
+        {/* ── Ring layer ──────────────────────────────────────────────────── */}
+        {/* Contracts toward canvas centre (50% 50%) and drifts upward.      */}
+        {/* Because the ring arc is near the canvas bottom, scaling from      */}
+        {/* canvas centre causes the visible arc to rise while shrinking.     */}
+        <div style={{
+          position: "absolute", inset: 0,
+          transform: `translateY(${ringDriftY}px) scale(${ringScale})`,
+          transformOrigin: "50% 50%",
+          opacity: Math.max(0, ringOpacity),
+          pointerEvents: "none",
+        }}>
+          <TimelineRing activeYearIndex={safeIndex} labelsOpacity={labelsOpacity} />
+        </div>
+
+        {/* Decorative frames — fade out with content */}
+        <div style={{ position: "absolute", inset: 0, opacity: framesOpacity, pointerEvents: "none" }}>
+          <div className="absolute flex h-[153.332px] items-center justify-center left-[37px] top-[293px] w-[187.781px]">
+            <div className="flex-none rotate-15"><SmallFrame img={imgImage3} /></div>
+          </div>
+          <div className="absolute flex h-[153.332px] items-center justify-center left-[1210px] top-[362px] w-[187.781px]">
+            <div className="-rotate-15 flex-none"><SmallFrame img={imgImage3} /></div>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div
+          className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col justify-center leading-[0] left-[calc(50%+7.5px)] not-italic text-center text-white top-[202px] whitespace-nowrap"
+          style={{ fontFamily: "'CRONDE', sans-serif", fontSize: 48, opacity: contentOpacity, transition: "opacity 0.25s ease" }}
+        >
+          <p className="leading-[normal]">{entry.title}</p>
+        </div>
+
+        {/* Body text */}
+        <div
+          className={`-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col ${BODY_COPY} justify-center left-[calc(50%+14px)] not-italic text-center text-white top-[337px] w-[770px]`}
+          style={{ opacity: contentOpacity, transition: "opacity 0.16s ease" }}
+        >
+          <p className="leading-[32px]">{entry.text}</p>
+        </div>
+
+        {/* Year counter — e.g. "08 / 14" — replaces the dots */}
+        <div
+          className="absolute bottom-[32px] left-1/2 -translate-x-1/2"
+          style={{ opacity: dotsOpacity }}
+        >
+          <p style={{
+            fontFamily: "'Futura PT', sans-serif",
+            fontSize: 13,
+            color: "#D9C7A8",
+            opacity: 0.55,
+            letterSpacing: "0.14em",
+            margin: 0,
+            whiteSpace: "nowrap",
+          }}>
+            {String(activeYearIndex + 1).padStart(2, "0")} / {String(TIMELINE_DATA.length).padStart(2, "0")}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -637,47 +883,74 @@ export function TimelineSection({
 
 export function PostTimelineSection() {
   return (
-    <div className="bg-[#fcf9f2] h-[860px] left-0 overflow-clip relative w-[1440px]">
-      <div className="absolute left-0 top-[7px] w-[1440px]">
-        <div className="h-[816px] left-0 overflow-clip relative w-[1440px]">
-          <SVGGroups />
-          <div className="absolute left-[74px] top-[113px]"><PhotoCard /></div>
-          <div className="absolute flex h-[244.998px] items-center justify-center left-[108.94px] top-[503.5px] w-[233.118px]">
-            <div className="flex-none rotate-[4.74deg]"><PhotoCard /></div>
+    <div className="bg-[#fcf9f2] relative w-full overflow-clip">
+
+      {/* ══════════════════ MOBILE / TABLET ══════════════════ */}
+      <div className="flex md:hidden flex-col items-center text-center px-6 py-16 gap-8">
+        <p className="font-['CRONDE:Regular',sans-serif] text-[#192441] text-[44px] leading-tight">
+          50 Years<br />{`Of God's Faithful Ministry`}
+        </p>
+        <div className="grid grid-cols-2 gap-4 w-full max-w-[420px]">
+          <div className="rounded-[3px] overflow-hidden aspect-[3/4]">
+            <img alt="" className="w-full h-full object-cover" src={imgContainer1} />
           </div>
-          <div className="absolute left-[1093px] top-[316px]"><PhotoCard /></div>
-          <div className="absolute flex h-[289.163px] items-center justify-center left-[1079px] top-[468px] w-[281.581px]">
-            <div className="flex-none rotate-[20.65deg]"><PhotoCard /></div>
+          <div className="rounded-[3px] overflow-hidden aspect-[3/4] mt-6">
+            <img alt="" className="w-full h-full object-cover" src={imgContainer2} />
           </div>
-          <div className="absolute flex h-[272.731px] items-center justify-center left-[1078px] top-[76px] w-[263.21px]">
-            <div className="flex-none rotate-[13.81deg]"><PhotoCard /></div>
-          </div>
-          <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['CRONDE:Regular',sans-serif] justify-center leading-[0] left-[calc(50%+0.5px)] not-italic text-[#192441] text-[72px] text-center top-[416.5px] w-[525px]">
-            <p className="leading-[normal]">Years<br />{`Of God's Faithful Ministry`}</p>
-          </div>
-          <div className="absolute flex h-[272.02px] items-center justify-center left-[102.33px] top-[280.35px] w-[262.426px]">
-            <div className="flex-none rotate-[-13.55deg]">
-              <div className="bg-white content-stretch flex flex-col items-start overflow-clip pb-[32px] pt-[8px] px-[8px] relative shadow-[0px_0px_9.2px_0px_rgba(0,0,0,0.07)] w-[215px]">
-                <div className="h-[188px] overflow-clip relative shrink-0 w-[199px]">
-                  <div className="absolute h-[219px] left-[-73px] top-[-31px] w-[327.677px]">
-                    <img alt="" className="absolute inset-0 max-w-none object-bottom pointer-events-none size-full" src={imgContainer1} />
+        </div>
+        <button
+          onClick={() => { window.location.hash = "#gallery"; }}
+          className="flex items-center justify-center p-[12px] rounded-[2px] w-full max-w-[280px] bg-[#192441] cursor-pointer border-0"
+        >
+          <span className="font-['Futura_PT:Book',sans-serif] text-[16px] text-white">
+            View Full Gallery
+          </span>
+        </button>
+      </div>
+
+      {/* ══════════════════ DESKTOP (pixel-perfect canvas, unchanged) ══════════════════ */}
+      <div className="hidden md:block relative w-[1440px] max-w-full mx-auto h-[860px]">
+        <div className="absolute left-0 top-[7px] w-[1440px]">
+          <div className="h-[816px] left-0 overflow-clip relative w-[1440px]">
+            <SVGGroups />
+            <div className="absolute left-[74px] top-[113px]"><PhotoCard /></div>
+            <div className="absolute flex h-[244.998px] items-center justify-center left-[108.94px] top-[503.5px] w-[233.118px]">
+              <div className="flex-none rotate-[4.74deg]"><PhotoCard /></div>
+            </div>
+            <div className="absolute left-[1093px] top-[316px]"><PhotoCard /></div>
+            <div className="absolute flex h-[289.163px] items-center justify-center left-[1079px] top-[468px] w-[281.581px]">
+              <div className="flex-none rotate-[20.65deg]"><PhotoCard /></div>
+            </div>
+            <div className="absolute flex h-[272.731px] items-center justify-center left-[1078px] top-[76px] w-[263.21px]">
+              <div className="flex-none rotate-[13.81deg]"><PhotoCard /></div>
+            </div>
+            <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['CRONDE:Regular',sans-serif] justify-center leading-[0] left-[calc(50%+0.5px)] not-italic text-[#192441] text-[72px] text-center top-[416.5px] w-[525px]">
+              <p className="leading-[normal]">Years<br />{`Of God's Faithful Ministry`}</p>
+            </div>
+            <div className="absolute flex h-[272.02px] items-center justify-center left-[102.33px] top-[280.35px] w-[262.426px]">
+              <div className="flex-none rotate-[-13.55deg]">
+                <div className="bg-white content-stretch flex flex-col items-start overflow-clip pb-[32px] pt-[8px] px-[8px] relative shadow-[0px_0px_9.2px_0px_rgba(0,0,0,0.07)] w-[215px]">
+                  <div className="h-[188px] overflow-clip relative shrink-0 w-[199px]">
+                    <div className="absolute h-[219px] left-[-73px] top-[-31px] w-[327.677px]">
+                      <img alt="" className="absolute inset-0 max-w-none object-bottom pointer-events-none size-full" src={imgContainer1} />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <button
-            onClick={() => { window.location.hash = "#gallery"; }}
-            className="absolute flex h-[42px] items-center justify-center left-[603px] p-[12px] rounded-[2px] top-[601px] w-[235px] bg-[#192441] cursor-pointer border-0"
-            style={{ fontFamily: "inherit" }}
-          >
-            <div className="[word-break:break-word] flex flex-col font-['Futura_PT:Book',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-center text-white whitespace-nowrap">
-              <p className="leading-[normal]">View Full Gallery</p>
-            </div>
-          </button>
-          <div className="absolute left-[640px] size-[172px] top-[113px]">
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <img alt="" className="absolute left-[-35.58%] max-w-none size-[171.15%] top-[-35.58%]" src={img51} />
+            <button
+              onClick={() => { window.location.hash = "#gallery"; }}
+              className="absolute flex h-[42px] items-center justify-center left-[603px] p-[12px] rounded-[2px] top-[601px] w-[235px] bg-[#192441] cursor-pointer border-0"
+              style={{ fontFamily: "inherit" }}
+            >
+              <div className="[word-break:break-word] flex flex-col font-['Futura_PT:Book',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-center text-white whitespace-nowrap">
+                <p className="leading-[normal]">View Full Gallery</p>
+              </div>
+            </button>
+            <div className="absolute left-[640px] size-[172px] top-[113px]">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute left-[-35.58%] max-w-none size-[171.15%] top-[-35.58%]" src={img51} />
+              </div>
             </div>
           </div>
         </div>
@@ -685,7 +958,7 @@ export function PostTimelineSection() {
     </div>
   );
 }
-// ─── Stories section ─────────────────────────────────────────────────────────
+// ─── Stories section (ukhome4 — "Voices of the Journey") ─────────────────────
 
 const STORIES = [
   {
@@ -711,24 +984,24 @@ const STORIES = [
 export function StoriesSection() {
   return (
     <div
-      className="relative w-full md:w-[1440px] overflow-clip px-4 md:px-0"
-      style={{ minHeight: 600, height: "auto", background: "#FCF9F2" }}
+      className="relative w-full overflow-clip px-4 md:px-0"
+      style={{ minHeight: 800, height: "auto", background: "#FCF9F2" }}
     >
       {/* Heading */}
-      <div className="pt-12 md:pt-20 pb-8 md:pb-0 mx-auto max-w-[680px] text-center">
-        <p className="font-['Futura_PT',sans-serif] text-[10px] md:text-[12px] text-[#192441] tracking-[0.22em] opacity-45 uppercase mb-4 md:mb-5">
+      <div className="mt-8 pt-12 md:pt-20 pb-8 md:pb-0 mx-auto max-w-[680px] text-center">
+        <p className="font-['Futura_PT'] text-[10px] md:text-[12px] text-[#192441] tracking-[0.22em] opacity-45 uppercase mb-4 md:mb-5">
           Stories of Ministry
         </p>
-        <h2 className="font-['CRONDE',sans-serif] text-[36px] md:text-[58px] text-[#192441] leading-tight mb-4 md:mb-6">
+        <h2 className="font-['CRONDE'] text-[36px] md:text-[58px] text-[#192441] leading-tight mb-4 md:mb-6">
           Voices of the Journey
         </h2>
-        <p className="font-['Futura_PT',sans-serif] text-[14px] md:text-[18px] text-[#192441] opacity-55 leading-relaxed">
+        <p className={`${BODY_COPY} text-[#192441] opacity-55`}>
           Across five decades, the Gospel has transformed lives throughout Western Europe.
         </p>
       </div>
 
       {/* Story cards */}
-      <div className="mt-8 md:mt-[238px] mb-12 md:mb-0 mx-auto max-w-[1200px] flex flex-col md:flex-row gap-8 md:gap-11">
+      <div className="mt-10 md:mt-16 mb-12 md:mb-0 mx-auto max-w-[1200px] flex flex-col md:flex-row gap-8 md:gap-11">
         {STORIES.map((story, i) => (
           <div key={i} className="flex-1 flex flex-col">
             {/* Photo */}
@@ -746,7 +1019,7 @@ export function StoriesSection() {
             <h3 className="font-['CRONDE',sans-serif] text-[18px] md:text-[22px] text-[#192441] mb-2 md:mb-3 leading-tight">
               {story.title}
             </h3>
-            <p className="font-['Futura_PT',sans-serif] text-[13px] md:text-[15px] text-[#192441] opacity-60 leading-relaxed">
+            <p className={`${BODY_COPY} text-[#192441] opacity-60`}>
               {story.text}
             </p>
           </div>
@@ -754,7 +1027,7 @@ export function StoriesSection() {
       </div>
 
       {/* CTA */}
-      <div className="pb-12 md:pb-[60px] flex justify-center">
+      <div className="pb-52 md:pb-[60px] flex justify-center">
         <div
           onClick={() => { window.location.hash = "#watch"; }}
           className="bg-[#192441] text-white font-['Futura_PT',sans-serif] text-[13px] md:text-[14px] tracking-wide py-3 md:py-3.5 px-8 md:px-9 rounded-full cursor-pointer whitespace-nowrap"
