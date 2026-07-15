@@ -259,7 +259,7 @@ function FounderCarouselMobile() {
           disabled={active === 0}
           style={{ background: "none", border: "none", cursor: active === 0 ? "default" : "pointer", opacity: active === 0 ? 0.3 : 1, padding: 8 }}
         >
-          <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
             <path d="M30 12L18 24L30 36" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
           </svg>
         </button>
