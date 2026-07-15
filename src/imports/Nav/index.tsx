@@ -26,7 +26,7 @@ const BRANCH_GROUPS = [
   { label: "Germany",           slug: "germany" },
   { label: "France",            slug: "france"},
   { label: "Italy",             slug: "italy" },
-  { label: "Denmark",           slug: "denmark" },
+  { label: "Demark",           slug: "demark" },
   { label: "Spain",             slug: "spain"},
     ],
   },

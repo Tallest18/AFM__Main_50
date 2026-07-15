@@ -148,7 +148,7 @@ export default function MobileNav() {
         <div className="flex flex-col h-full">
           {/* Menu Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="font-['CRONDE:Regular',sans-serif] text-lg">Menu</span>
+            <span className="font-['CRONDE:Regular'] text-lg">Menu</span>
             <button
               onClick={closeMenu}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"

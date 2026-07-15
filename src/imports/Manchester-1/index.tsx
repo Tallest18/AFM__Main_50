@@ -13,7 +13,7 @@ function ChevronIcon({ className = "" }: { className?: string }) {
   return (
     <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 24 24">
       <path
-        d="M15 6L9 12L15 18"
+        d="m15 6-6 6 6 6"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
