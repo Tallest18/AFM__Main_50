@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import svgPaths from "../../imports/Frame28-1/svg-507rsgd0a0";
 import { SiteHeader, useSiteScale, useIsMobile, DESIGN_WIDTH } from "./SiteHeader";
+import GalleryMobile from "./MobileGallery";
 
 // Static imports
 import image14 from "../../imports/Frame28-1/13080b4795fd0ccbe725b61298f65577a198e84f.png";
@@ -333,92 +334,7 @@ function GalleryCanvas(): ReactElement {
 
 /* ---------- Mobile layout (natural sizing, single card, no scale transform) ---------- */
 
-function GalleryMobile(): ReactElement {
-  const [active, setActive] = useState<number>(0);
-  const slide = SLIDES[active];
-  const total = SLIDES.length;
 
-  const prev = () => setActive(i => (i - 1 + total) % total);
-  const next = () => setActive(i => (i + 1) % total);
-
-  return (
-    <div style={{ width: "100%", background: "#fcf9f2", position: "relative", paddingTop: 96, paddingBottom: 48 }}>
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <h1
-          className="font-['CRONDE:Regular',sans-serif]"
-          style={{ margin: 0, marginBottom: 24, fontSize: 30, color: "#0f1421", textAlign: "center", lineHeight: 1.15 }}
-        >
-          Our pictures over the years
-        </h1>
-
-        <button
-          onClick={() => {
-            window.location.hash = "#pictures";
-          }}
-          className="bg-white overflow-clip shadow-[0px_2px_10px_0px_rgba(0,0,0,0.08)] border-0 cursor-pointer"
-          style={{
-            width: "100%",
-            maxWidth: 320,
-            padding: "10px 10px 24px",
-            display: "block",
-          }}
-        >
-          <div style={{ position: "relative", width: "100%", aspectRatio: "1 / 0.9", overflow: "hidden" }}>
-            <CardImg src={slide.center} isCenter={true} />
-          </div>
-        </button>
-
-        <p
-          className="font-['Futura_PT:Book',sans-serif]"
-          style={{ margin: "20px 0 0", fontSize: 17, color: "#0f1421", textAlign: "center" }}
-        >
-          {slide.label}
-        </p>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 20 }}>
-          <button
-            onClick={prev}
-            aria-label="Previous"
-            style={{ background: "none", border: "none", padding: 8, cursor: "pointer" }}
-          >
-            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-              <path d="M30 12L18 24L30 36" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
-            </svg>
-          </button>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  border: "none",
-                  padding: 0,
-                  background: i === active ? "#192441" : "#D8D8D8",
-                  cursor: "pointer",
-                }}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={next}
-            aria-label="Next"
-            style={{ background: "none", border: "none", padding: 8, cursor: "pointer" }}
-          >
-            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-              <path d="M30 12L18 24L30 36" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" transform="rotate(180 24 24)" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function GalleryPage({ onBack: _onBack }: { onBack?: () => void } = {}): ReactElement {
   const isMobile = useIsMobile();
@@ -441,7 +357,10 @@ export function GalleryPage({ onBack: _onBack }: { onBack?: () => void } = {}): 
         }}
       >
         {isMobile ? (
-          <GalleryMobile />
+          <GalleryMobile
+        slides={SLIDES}
+        CardImg={CardImg}
+/>
         ) : (
           <div style={{ width: "100%", height: DESIGN_HEIGHT * scale, overflow: "hidden" }}>
             <div style={{ width: DESIGN_WIDTH, height: DESIGN_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top left" }}>
