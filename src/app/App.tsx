@@ -185,6 +185,12 @@ export default function App() {
   const navTranslateY = (1 - phase2) * -NAV_H * scale;
 
   const navigateHome = () => { window.location.hash = ""; };
+  const scrollHeroForward = (stage: "bible" | "anniversary") => {
+    window.scrollTo({
+      top: stage === "bible" ? heroScrollDistance * P1_END : heroScrollDistance,
+      behavior: "smooth",
+    });
+  };
 
   if (page === "gallery") {
     return <><GalleryPage onBack={navigateHome} /><TimelineSheet /></>;
@@ -291,7 +297,7 @@ export default function App() {
             pointerEvents: heroTranslateY <= -vh ? "none" : "auto",
           }}
         >
-          <Section1 scrollProgress={phase1} />
+          <Section1 anniversaryInView={phase2 < 0.15} onScrollDown={scrollHeroForward} scrollProgress={phase1} />
         </div>
       </div>
     );
@@ -355,7 +361,7 @@ export default function App() {
           height: "100%",
         }}>
           <div style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-            <Section1 scrollProgress={phase1} />
+            <Section1 anniversaryInView={phase2 < 0.15} onScrollDown={scrollHeroForward} scrollProgress={phase1} />
           </div>
         </div>
       </div>
