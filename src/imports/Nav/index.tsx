@@ -39,21 +39,32 @@ export default function Nav() {
     return () => document.removeEventListener("mousedown", handler);
   }, [branchOpen]);
 
+  const openTimeline = () => {
+    if (window.location.hash !== "#timeline") {
+      window.history.pushState(
+        null,
+        "",
+        window.location.pathname + window.location.search + "#timeline",
+      );
+    }
+    window.dispatchEvent(new Event("timeline:open"));
+  };
+
   return (
     <div className="bg-white content-stretch flex items-center justify-center relative size-full" data-name="Nav">
       <div className="flex-[1_0_0] h-full w-full relative">
         <div className="flex flex-row items-center justify-center max-w-[inherit] size-full">
-          <div className="content-stretch flex items-center justify-between max-w-[inherit] px-[18.933px] relative size-full">
+          <div className="relative grid size-full max-w-[inherit] grid-cols-[1fr_auto_1fr] items-center px-[18.933px]">
 
             {/* Logo */}
-            <div className="min-w-[129.378px] relative shrink-0 w-[387.345px]">
-              <div className="content-stretch flex flex-col items-center min-w-[inherit] pr-59.75 relative size-full">
+            <div className="relative shrink-0 justify-self-start">
+              <div className="relative flex items-center">
                 <div className="relative h-14.5 w-47 shrink-0 cursor-pointer" onClick={() => {
                   window.location.hash = ""; 
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}>
                   <div className="overflow-clip relative rounded-[inherit] size-full">
-                    <div className="absolute -left-11.5 -top-25 size-70">
+                    <div className="absolute -left-11.5 -top-[115px] size-70">
                       <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img34159} />
                     </div>
                   </div>
@@ -62,7 +73,7 @@ export default function Nav() {
             </div>
 
             {/* Nav links */}
-            <div className="content-stretch flex gap-[25.244px] items-center relative shrink-0">
+            <div className="relative flex shrink-0 items-center gap-[25.244px] justify-self-center">
               <p
                 className="font-['Futura_PT:Book',sans-serif] font-normal leading-[18.144px] not-italic text-[#38362d] text-[15.778px] tracking-[-0.2367px] whitespace-nowrap cursor-pointer hover:opacity-60 transition-opacity"
                 onClick={() => { window.location.hash = "#founder"; }}
@@ -113,9 +124,12 @@ export default function Nav() {
                 </div>
               </div>
 
-              <p className="font-['Futura_PT:Book',sans-serif] font-normal leading-[18.144px] not-italic text-[#38362d] text-[15.778px] tracking-[-0.2367px] whitespace-nowrap cursor-pointer hover:opacity-60 transition-opacity" onClick={() => {
-                window.location.hash = "#timeline";
-              }}>Timeline</p>
+              <p
+                className="font-['Futura_PT:Book',sans-serif] font-normal leading-[18.144px] not-italic text-[#38362d] text-[15.778px] tracking-[-0.2367px] whitespace-nowrap cursor-pointer hover:opacity-60 transition-opacity"
+                onClick={openTimeline}
+              >
+                Timeline
+              </p>
 
               {/* Gallery */}
               <p
@@ -136,8 +150,8 @@ export default function Nav() {
             </div>
 
             {/* AFC UK button */}
-            <div className="h-[37.867px] min-w-[116.338px] relative shrink-0 w-[373.933px]">
-              <div className="content-stretch flex flex-col items-center min-w-[inherit] pl-[257.671px] relative size-full">
+            <div className="relative shrink-0 justify-self-end">
+              <div className="relative flex items-center">
                 <div className="bg-[#192441] content-stretch flex h-[37.867px] items-center justify-center px-[18.933px] relative rounded-[66.267px] shrink-0 cursor-pointer">
                   <p className="font-['Futura_PT:Book',sans-serif] font-normal leading-[13.253px] not-italic text-[10.729px] text-center text-white tracking-[0.0552px] whitespace-nowrap">AFC UK</p>
                 </div>

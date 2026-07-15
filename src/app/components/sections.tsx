@@ -316,7 +316,17 @@ function StartedFeature() {
           </p>
           <a
             href="#timeline"
-            onClick={(event) => { event.preventDefault(); window.location.hash = "#timeline"; }}
+            onClick={(event) => {
+              event.preventDefault();
+              if (window.location.hash !== "#timeline") {
+                window.history.pushState(
+                  null,
+                  "",
+                  window.location.pathname + window.location.search + "#timeline",
+                );
+              }
+              window.dispatchEvent(new Event("timeline:open"));
+            }}
             className={`${BODY_COPY} mt-8 text-[17px] leading-none text-white underline decoration-1 underline-offset-4`}
           >
             Read Full Timeline
@@ -422,7 +432,7 @@ function TimelineRing({
         className={`-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col ${HEADER_FONT} justify-center leading-0 left-[calc(50%-259.1px)] not-italic text-[#d9c7a8] text-[24px] text-center top-[736.26px] whitespace-nowrap`}
         style={fade(!!prev2)}
       >
-        <p className="leading-[normal]">{prev2?.year ?? ""}</p>
+        <p className={`${HEADER_FONT} leading-normal`}>{prev2?.year ?? ""}</p>
       </div>
 
       <div
@@ -431,14 +441,14 @@ function TimelineRing({
       >
         <div className="flex-none rotate-30">
           <div className={`[word-break:break-word] flex flex-col ${HEADER_FONT} justify-center leading-0 not-italic relative text-[#d9c7a8] text-[24px] text-center whitespace-nowrap`}>
-            <p className="leading-[normal]">{prev1?.year ?? ""}</p>
+            <p className={`${HEADER_FONT} leading-normal`}>{prev1?.year ?? ""}</p>
           </div>
         </div>
       </div>
 
       <div className={`-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col ${HEADER_FONT} justify-center leading-0 left-[calc(50%+0.5px)] not-italic text-center text-white top-[571.24px] whitespace-nowrap`}
            style={{ fontSize: 56, fontWeight: 700, opacity: labelsOpacity, transition: "opacity 0.35s ease" }}>
-        <p className="leading-[normal]">{cur.year}</p>
+        <p className={`${HEADER_FONT} leading-normal`}>{cur.year}</p>
       </div>
 
       <div
@@ -447,7 +457,7 @@ function TimelineRing({
       >
         <div className="flex-none rotate-[-30.51deg]">
           <div className={`[word-break:break-word] flex flex-col ${HEADER_FONT} justify-center leading-0 not-italic relative text-[#d9c7a8] text-[24px] text-center whitespace-nowrap`}>
-            <p className="leading-[normal]">{next1?.year ?? ""}</p>
+            <p className={`${HEADER_FONT} leading-normal`}>{next1?.year ?? ""}</p>
           </div>
         </div>
       </div>
@@ -456,7 +466,7 @@ function TimelineRing({
         className={`-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col ${HEADER_FONT} justify-center leading-0 left-[calc(50%+263.39px)] not-italic text-[#d9c7a8] text-[24px] text-center top-[742.52px] whitespace-nowrap`}
         style={fade(!!next2)}
       >
-        <p className="leading-[normal]">{next2?.year ?? ""}</p>
+        <p className={`${HEADER_FONT} leading-normal`}>{next2?.year ?? ""}</p>
       </div>
     </>
   );
@@ -776,17 +786,22 @@ export function TimelineSection({
         </div>
 
         <div
-          className={`absolute left-1/2 top-[18%] flex w-[min(90vw,1000px)] -translate-x-1/2 flex-col justify-center text-center text-white ${HEADER_FONT}`}
+          className="absolute left-1/2 top-[18%] flex w-[min(90vw,1000px)] -translate-x-1/2 flex-col justify-center text-center text-white"
           style={{ fontSize: "clamp(44px, 4.5vw, 72px)", opacity: contentOpacity, transition: "opacity 0.25s ease" }}
         >
-          <p className="leading-[normal]">{entry.title}</p>
+          <h3
+            className={`${HEADER_FONT} leading-normal`}
+            style={{ fontSize: "clamp(44px, 4.5vw, 72px)" }}
+          >
+            {entry.title}
+          </h3>
         </div>
 
         <div
-          className={`absolute left-1/2 top-[36%] flex w-[min(76vw,1080px)] -translate-x-1/2 flex-col justify-center text-center text-white ${BODY_COPY}`}
+          className="absolute left-1/2 top-[36%] flex w-[min(76vw,1080px)] -translate-x-1/2 flex-col justify-center text-center text-white"
           style={{ opacity: contentOpacity, transition: "opacity 0.16s ease" }}
         >
-          <p className="text-[clamp(18px,1.55vw,24px)] leading-[1.45]">{entry.text}</p>
+          <p className={`${BODY_COPY} text-[clamp(18px,1.55vw,24px)] leading-[1.45]`}>{entry.text}</p>
         </div>
 
         <div

@@ -10,6 +10,17 @@ const NAV_LINKS: { label: string; hash: string }[] = [
 ];
 
 function go(hash: string) {
+  if (hash === "timeline") {
+    if (window.location.hash !== "#timeline") {
+      window.history.pushState(
+        null,
+        "",
+        window.location.pathname + window.location.search + "#timeline",
+      );
+    }
+    window.dispatchEvent(new Event("timeline:open"));
+    return;
+  }
   window.location.hash = hash;
 }
 

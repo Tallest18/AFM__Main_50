@@ -42,6 +42,21 @@ export default function MobileNav() {
   };
 
   const handleNavClick = (hash: string) => {
+    if (hash === "#timeline") {
+      closeMenu();
+      requestAnimationFrame(() => {
+        if (window.location.hash !== hash) {
+          window.history.pushState(
+            null,
+            "",
+            window.location.pathname + window.location.search + hash,
+          );
+        }
+        window.dispatchEvent(new Event("timeline:open"));
+      });
+      return;
+    }
+
     window.location.hash = hash;
     closeMenu();
   };
@@ -49,16 +64,30 @@ export default function MobileNav() {
   useEffect(() => {
     if (!menuOpen) return;
 
+    const scrollPosition = window.scrollY;
     const previousOverflow = document.body.style.overflow;
+    const previousPosition = document.body.style.position;
+    const previousTop = document.body.style.top;
+    const previousWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeMenu();
     };
 
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = "100%";
+    document.documentElement.style.overflow = "hidden";
     window.addEventListener("keydown", closeOnEscape);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.position = previousPosition;
+      document.body.style.top = previousTop;
+      document.body.style.width = previousWidth;
+      document.documentElement.style.overflow = previousHtmlOverflow;
       window.removeEventListener("keydown", closeOnEscape);
+      window.scrollTo(0, scrollPosition);
     };
   }, [menuOpen]);
 
@@ -177,6 +206,14 @@ export default function MobileNav() {
                 className="text-left px-4 py-3 hover:bg-gray-100 rounded-lg transition-colors font-['Futura_PT:Book',sans-serif] text-sm"
               >
                 Department
+              </button>
+
+              {/* Timeline */}
+              <button
+                onClick={() => handleNavClick("#timeline")}
+                className="text-left px-4 py-3 hover:bg-gray-100 rounded-lg transition-colors font-['Futura_PT:Book',sans-serif] text-sm"
+              >
+                Timeline
               </button>
 
               {/* Gallery */}
