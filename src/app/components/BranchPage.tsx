@@ -18,6 +18,7 @@ import Glasgow from "../../imports/Glasgow/index";
 import Leicester from "../../imports/Leicester/index";
 import Spain from "../../imports/Spain/index";
 import Bristol from "../../imports/Bristol/index";
+import Denmark from "../../imports/Demark/index";
 
 const DESIGN_WIDTH  = SITE_DESIGN_WIDTH; // 1440 — re-exported from SiteHeader, kept as a local alias so the rest of this file doesn't need renaming
 const DESIGN_HEIGHT = 1920;
@@ -208,8 +209,8 @@ export function BranchPage({ branch, onBack }: { branch: string; onBack: () => v
   if (branch === "coventry") {
     return <ResponsiveBranchPage onBack={onBack} Canvas={Coventry} Mobile={Coventry} />;
   }
-  if (branch === "demark") {
-    return <ResponsiveBranchPage onBack={onBack} Canvas={Demark} Mobile={Demark} />;
+  if (branch === "denmark") {
+    return <ResponsiveBranchPage onBack={onBack} Canvas={Denmark} Mobile={Denmark} />;
   }
   if (branch === "edinburgh") {
     return <ResponsiveBranchPage onBack={onBack} Canvas={Edinburgh} Mobile={Edinburgh} />;
@@ -223,7 +224,7 @@ export function BranchPage({ branch, onBack }: { branch: string; onBack: () => v
   if (branch === "glasgow") {
     return <ResponsiveBranchPage onBack={onBack} Canvas={Glasgow} Mobile={Glasgow} />;
   }
-  if (branch === "liecester") {
+  if (branch === "leicester") {
     return <ResponsiveBranchPage onBack={onBack} Canvas={Leicester} Mobile={Leicester} />;
   }
   if (branch === "spain") {
