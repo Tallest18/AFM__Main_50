@@ -54,9 +54,6 @@ function CrestIcon({ size = 90 }: { size?: number }): ReactElement {
   return (
     <svg width={size} height={h} viewBox="0 0 90 104" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
       <path d="M8 20 C 20 6, 70 6, 82 20" stroke="#192441" strokeWidth="1.4" fill="none" />
-      {/* SVG <text> isn't covered by the global h1-h6/body tag rules, so it still
-          needs an explicit font — point it at the same CSS var used for body copy
-          rather than a hardcoded font name, so it stays in sync if the var changes. */}
       <text x="45" y="16" textAnchor="middle" fontSize="8" fontFamily="var(--font-body)" letterSpacing="1" fill="#192441">
         AFC 1976
       </text>
@@ -101,15 +98,6 @@ function DepartmentCardView({ card }: { card: DepartmentCard }): ReactElement {
       <div style={{ marginBottom: 22 }}>
         <CrestIcon />
       </div>
-      {/*
-        Card titles are meant to render in the BODY font (Futura), not the
-        heading font — so this can't be a real <h1>-<h6>, since the global
-        CSS forces those to CRONDE with !important. Using a <p> keeps it in
-        the body-font tag list (p/li/label/blockquote/figcaption) so
-        var(--font-body) applies with no inline fontFamily needed, while
-        role="heading"/aria-level preserves the same heading semantics the
-        old <h3> gave screen readers.
-      */}
       <p
         role="heading"
         aria-level={3}
@@ -143,7 +131,6 @@ function DepartmentCanvas(): ReactElement {
     <div style={{ width: "100%", minHeight: "100vh", background: "#fcf9f2", position: "relative" }}>
       <DepartmentWatermark />
 
-      {/* Real <h1> so var(--font-heading) applies via the global h1-h6 rule */}
       <h1
         className="-translate-x-1/2 absolute mt-10 text-[#0f1421] text-center"
         style={{
@@ -161,7 +148,7 @@ function DepartmentCanvas(): ReactElement {
         className="-translate-x-1/2 absolute mt-10 text-center"
         style={{ ...BODY_STYLE, left: "50%", top: 148, width: "58%", color: "#3b3b3b", margin: 0 }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+        Every branch carries its calling through the people who serve it — voices raised in song, children discipled from their earliest years, young people gathered each May, hospitality quietly offered at the door, and real needs met with real hands. Explore the ministries that have shaped this church for fifty years, and find where you might serve.
       </p>
 
       <div
@@ -187,13 +174,13 @@ function DepartmentCanvas(): ReactElement {
 function DepartmentMobile(): ReactElement {
   return (
     <div style={{ width: "100%", background: "#fcf9f2", position: "relative", paddingTop: 96, paddingBottom: 48 }}>
-      <div style={{ position: "relative", padding: "0 20px" }}>
-        {/* Real <h1> so var(--font-heading) applies */}
+      {/* Centered content wrapper */}
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px" }}>
         <h1 style={{ ...headingSize(32, { lineHeight: 1.15 }), color: "#0f1421", textAlign: "center", margin: 0, marginBottom: 12 }}>
           Department
         </h1>
         <p style={{ ...BODY_STYLE, margin: "0 auto 28px", maxWidth: 480, color: "#3b3b3b", textAlign: "center" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+          Every branch carries its calling through ministry — music, children, youth, hospitality, and care. Explore where you might serve.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -213,7 +200,6 @@ function DepartmentMobile(): ReactElement {
               <div style={{ marginBottom: 16 }}>
                 <CrestIcon size={64} />
               </div>
-              {/* Same <p role="heading"> body-font treatment as the desktop card */}
               <p
                 role="heading"
                 aria-level={3}
@@ -255,8 +241,24 @@ export function DepartmentPage({ onBack: _onBack }: { onBack?: () => void } = {}
         {isMobile ? (
           <DepartmentMobile />
         ) : (
-          <div style={{ width: "100%", height: DESIGN_HEIGHT * scale, overflow: "hidden" }}>
-            <div style={{ width: DESIGN_WIDTH, height: DESIGN_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+          // ── Desktop: centered with flex ──
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              height: DESIGN_HEIGHT * scale,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                width: DESIGN_WIDTH,
+                height: DESIGN_HEIGHT,
+                transform: `scale(${scale})`,
+                transformOrigin: "top center", // scale from the top-middle so it stays centred
+              }}
+            >
               <DepartmentCanvas />
             </div>
           </div>
