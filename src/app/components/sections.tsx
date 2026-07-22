@@ -26,7 +26,7 @@ import imgPrayerPhoto from "../../imports/Frame19/ce8c1a1065b04074fbc18eb2c06e73
 
 // ── NEW ASSETS ──────────────────────────────────────────────────────────────
 import imgVideoPoster from "../../imports/Homepage/ukpic.png";
-import videoSrcPlaceholder from "../../imports/Homepage/aboutvideo.mp4";
+import videoSrcPlaceholder from "../../imports/Homepage/Children.mp4";
 
 // ─── Site-wide typography tokens ───────────────────────────────────────────
 export const HEADER_FONT = "site-heading";
